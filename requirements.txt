@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+ultralytics
+opencv-python
+mediapipe
+qrcode[pil]
+pillow
+numpy
