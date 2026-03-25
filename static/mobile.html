@@ -3,167 +3,225 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Charlotte AI Research – Activate Demo</title>
+  <title>CAIR Demo Trigger</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;600;700;800&display=swap" rel="stylesheet">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #020202;
+      --panel: rgba(12, 12, 15, 0.92);
+      --line: rgba(255, 255, 255, 0.1);
+      --text: #f4f4f5;
+      --muted: #a2a2ad;
+      --muted-soft: #6e6e78;
+      --teal: #2fd6c6;
+      --pink: #ff5c9b;
+      --pink-soft: rgba(255, 92, 155, 0.18);
+      --teal-soft: rgba(47, 214, 198, 0.18);
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; }
 
     body {
       min-height: 100vh;
-      background: #06090f;
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-      color: #e0e8f0;
+      padding: 28px 20px 36px;
       display: flex;
-      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 40px 24px 80px;
+      background:
+        radial-gradient(circle at top left, rgba(47, 214, 198, 0.14), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255, 92, 155, 0.16), transparent 32%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    .shell {
+      width: min(100%, 390px);
+      border-radius: 28px;
+      padding: 28px 22px 24px;
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.04), rgba(255, 255, 255, 0.02)),
+        var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.38);
       text-align: center;
     }
 
     .tag {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 18px;
+      padding: 8px 14px;
+      border-radius: 999px;
+      background: var(--teal-soft);
+      border: 1px solid rgba(47, 214, 198, 0.26);
+      color: var(--teal);
       font-size: 11px;
-      font-weight: 600;
+      font-weight: 700;
       letter-spacing: 0.18em;
       text-transform: uppercase;
-      color: #00c875;
-      margin-bottom: 20px;
+    }
+
+    .tag::before {
+      content: "";
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--pink);
+      box-shadow: 0 0 12px rgba(255, 92, 155, 0.7);
     }
 
     h1 {
-      font-size: 38px;
+      font-size: 40px;
+      line-height: 0.95;
       font-weight: 800;
-      color: #fff;
-      line-height: 1.05;
-      margin-bottom: 12px;
+      letter-spacing: -0.04em;
     }
-    h1 .green { color: #00c875; }
+
+    h1 span { color: var(--teal); }
 
     .sub {
-      font-size: 15px;
-      color: #5a7a90;
+      margin-top: 16px;
+      color: var(--muted);
+      font-size: 16px;
       line-height: 1.6;
-      max-width: 300px;
-      margin-bottom: 52px;
     }
+
+    .info-card {
+      margin-top: 22px;
+      padding: 16px 18px;
+      border-radius: 20px;
+      background: rgba(255, 255, 255, 0.04);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      color: #d7d7dd;
+      font-size: 15px;
+      line-height: 1.55;
+    }
+
+    .info-card strong { color: var(--pink); }
 
     #btn {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 10px;
-      background: #00c875;
-      color: #000;
-      font-family: inherit;
-      font-size: 17px;
-      font-weight: 700;
-      border: none;
-      border-radius: 14px;
-      padding: 20px 36px;
-      cursor: pointer;
       width: 100%;
-      max-width: 300px;
-      transition: background 0.15s, transform 0.1s;
+      margin-top: 24px;
+      border: none;
+      border-radius: 18px;
+      padding: 18px 20px;
+      background: linear-gradient(90deg, var(--teal), var(--pink));
+      color: #08080a;
+      font: inherit;
+      font-size: 17px;
+      font-weight: 800;
       letter-spacing: 0.02em;
-    }
-    #btn:active { transform: scale(0.96); }
-    #btn:disabled {
-      background: #0e2018;
-      color: #2a5040;
-      cursor: not-allowed;
+      cursor: pointer;
+      transition: transform 0.12s ease, opacity 0.12s ease;
     }
 
-    /* arrow icon */
-    #btn svg {
-      flex-shrink: 0;
-      transition: transform 0.15s;
+    #btn:active { transform: scale(0.98); }
+
+    #btn:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+      transform: none;
     }
-    #btn:not(:disabled):hover svg { transform: translateX(3px); }
 
     #status {
-      margin-top: 28px;
+      min-height: 48px;
+      margin-top: 18px;
+      color: var(--muted);
       font-size: 15px;
-      min-height: 50px;
       line-height: 1.5;
-      color: #3a5a70;
-      max-width: 280px;
     }
-    #status.ok    { color: #00c875; }
-    #status.info  { color: #7ab4ff; }
-    #status.err   { color: #ff6b6b; }
+
+    #status.ok { color: var(--teal); }
+    #status.info { color: #ffd4e4; }
+    #status.err { color: #ff8db7; }
 
     .footer {
-      position: fixed;
-      bottom: 20px;
-      font-size: 11px;
-      color: #1e2e3a;
+      margin-top: 20px;
+      padding-top: 18px;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      color: var(--muted-soft);
+      font-size: 12px;
+      line-height: 1.55;
       letter-spacing: 0.04em;
     }
   </style>
 </head>
 <body>
+  <div class="shell">
+    <div class="tag">CAIR Backup Trigger</div>
+    <h1>Start the <span>live demo</span></h1>
+    <p class="sub">
+      This is the manual trigger for the hallway screen outside the CAIR lab.
+      The on-screen thumbs-up interaction is the primary experience.
+    </p>
 
-  <div class="tag">NinerGives 2026</div>
-  <h1>Charlotte<br><span class="green">AI Research</span></h1>
-  <p class="sub">Tap the button to start a 30-second live AI demo on the screen above you.</p>
+    <div class="info-card">
+      Press once to launch a <strong>10-second</strong> donation-classifier demo on the TV.
+      If it is already running, this page will show the remaining time.
+    </div>
 
-  <button id="btn" onclick="activate()">
-    Activate AI Demo
-    <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-      <path d="M5 12h14M12 5l7 7-7 7"/>
-    </svg>
-  </button>
+    <button id="btn" type="button" onclick="activate()">Launch CAIR Demo</button>
+    <div id="status"></div>
 
-  <div id="status"></div>
+    <div class="footer">
+      No video is stored. This page only triggers the display loop on the nearby screen.
+    </div>
+  </div>
 
-  <div class="footer">Demo runs 30s &nbsp;·&nbsp; No video is recorded or stored</div>
+  <script>
+    const btn = document.getElementById("btn");
+    const status = document.getElementById("status");
+    let countdownInterval = null;
 
-<script>
-  const btn    = document.getElementById('btn');
-  const status = document.getElementById('status');
-  let countdownInterval = null;
+    async function activate() {
+      btn.disabled = true;
+      status.className = "";
+      status.textContent = "Activating hallway display...";
 
-  async function activate() {
-    btn.disabled = true;
-    status.className = '';
-    status.textContent = 'Activating...';
+      try {
+        const response = await fetch("/start", { method: "POST" });
+        const data = await response.json();
 
-    try {
-      const res  = await fetch('/start', { method: 'POST' });
-      const data = await res.json();
-
-      if (data.status === 'started') {
-        status.className = 'ok';
-        status.textContent = 'Demo activated! Watch the screen.';
-        startCountdown(30);
-      } else if (data.status === 'already_active') {
-        status.className = 'info';
-        status.textContent = `Demo is already running (${data.remaining}s left).`;
-        startCountdown(data.remaining);
-      }
-    } catch {
-      status.className = 'err';
-      status.textContent = 'Could not connect. Try again.';
-      btn.disabled = false;
-    }
-  }
-
-  function startCountdown(seconds) {
-    clearInterval(countdownInterval);
-    let s = seconds;
-    countdownInterval = setInterval(() => {
-      s--;
-      if (s <= 0) {
-        clearInterval(countdownInterval);
+        if (data.status === "started") {
+          status.className = "ok";
+          status.textContent = "Demo activated. Look at the TV.";
+          startCountdown(data.duration || 10);
+        } else if (data.status === "already_active") {
+          status.className = "info";
+          status.textContent = `Demo already running. ${data.remaining}s remaining.`;
+          startCountdown(data.remaining);
+        } else {
+          throw new Error("Unexpected response");
+        }
+      } catch (error) {
+        status.className = "err";
+        status.textContent = "Could not reach the display server. Try again.";
         btn.disabled = false;
-        status.className = '';
-        status.textContent = 'Demo ended. Tap to run again!';
-      } else {
-        status.textContent = `Running... ${s}s remaining`;
       }
-    }, 1000);
-  }
-</script>
+    }
+
+    function startCountdown(seconds) {
+      clearInterval(countdownInterval);
+      let remaining = seconds;
+
+      countdownInterval = setInterval(() => {
+        remaining -= 1;
+
+        if (remaining <= 0) {
+          clearInterval(countdownInterval);
+          btn.disabled = false;
+          status.className = "";
+          status.textContent = "Demo ended. You can launch it again.";
+          return;
+        }
+
+        status.textContent = `Running on TV... ${remaining}s remaining`;
+      }, 1000);
+    }
+  </script>
 </body>
 </html>

@@ -2,61 +2,132 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Charlotte AI Research – NinerGives</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Charlotte AI Research - NinerGives</title>
   <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
-    * { margin: 0; padding: 0; box-sizing: border-box; }
-
-    body {
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: #06090f;
-      font-family: 'Space Grotesk', system-ui, sans-serif;
-      color: #e0e8f0;
+    :root {
+      --bg: #030303;
+      --panel: rgba(255, 255, 255, 0.04);
+      --panel-strong: rgba(255, 255, 255, 0.07);
+      --line: rgba(255, 255, 255, 0.12);
+      --text: #f4f5f7;
+      --muted: #a1a5ad;
+      --muted-soft: #717680;
+      --teal: #2fd6c6;
+      --pink: #ff5c9b;
+      --shadow: 0 24px 60px rgba(0, 0, 0, 0.45);
     }
 
-    /* ── idle ── */
-    #idle {
-      position: absolute;
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    html, body {
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background:
+        radial-gradient(circle at top left, rgba(47, 214, 198, 0.1), transparent 28%),
+        radial-gradient(circle at bottom right, rgba(255, 92, 155, 0.1), transparent 30%),
+        var(--bg);
+      color: var(--text);
+      font-family: "Space Grotesk", system-ui, sans-serif;
+    }
+
+    body::before {
+      content: "";
+      position: fixed;
       inset: 0;
+      background-image:
+        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
+      background-size: 56px 56px;
+      opacity: 0.5;
+      pointer-events: none;
+    }
+
+    .screen {
+      position: relative;
+      z-index: 1;
+      display: grid;
+      grid-template-columns: 300px minmax(0, 1fr) 300px;
+      gap: 24px;
+      width: 100vw;
+      height: 100vh;
+      padding: 24px;
+    }
+
+    .qr-side {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .qr-side-card {
+      width: 100%;
+      height: 100%;
+      border-radius: 24px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      transition: opacity 0.7s ease;
+      gap: 14px;
+      padding: 24px 18px;
+      text-align: center;
     }
-    #idle.hidden { opacity: 0; pointer-events: none; }
 
-    /* subtle grid bg */
-    #idle::before {
-      content: '';
+    .side-label {
+      font-size: 14px;
+      font-weight: 700;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--teal);
+    }
+
+    .center-stage {
+      position: relative;
+      overflow: hidden;
+      border-radius: 28px;
+      border: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.025);
+      box-shadow: var(--shadow);
+    }
+
+    #idle,
+    #demo {
       position: absolute;
       inset: 0;
-      background-image:
-        linear-gradient(rgba(0, 200, 120, 0.04) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(0, 200, 120, 0.04) 1px, transparent 1px);
-      background-size: 56px 56px;
-      animation: gridScroll 25s linear infinite;
+      transition: opacity 0.6s ease;
     }
-    @keyframes gridScroll {
-      from { background-position: 0 0; }
-      to   { background-position: 56px 56px; }
+
+    #idle {
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      padding: 56px 72px 72px;
+    }
+
+    #idle.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
     .idle-inner {
       position: relative;
+      z-index: 1;
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 80px;
+      gap: 72px;
       align-items: center;
-      padding: 60px 80px;
       width: 100%;
       max-width: 1500px;
+      margin: 0 auto;
     }
 
-    /* left column */
     .idle-left {
       display: flex;
       flex-direction: column;
@@ -65,80 +136,77 @@
 
     .tag {
       display: inline-block;
-      background: rgba(0, 200, 100, 0.1);
-      border: 1px solid rgba(0, 200, 100, 0.28);
-      color: #00c875;
-      font-size: 18px;
-      font-weight: 600;
-      letter-spacing: 0.16em;
-      text-transform: uppercase;
-      padding: 8px 18px;
-      border-radius: 4px;
       width: fit-content;
+      padding: 8px 18px;
+      border-radius: 999px;
+      background: rgba(47, 214, 198, 0.12);
+      border: 1px solid rgba(47, 214, 198, 0.24);
+      color: var(--teal);
+      font-size: 16px;
+      font-weight: 700;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
     }
 
     .org-name {
-      font-size: 80px;
+      font-size: 82px;
       font-weight: 800;
-      line-height: 1;
-      color: #fff;
-      letter-spacing: -0.01em;
+      line-height: 0.98;
+      letter-spacing: -0.04em;
+      color: #ffffff;
     }
-    .org-name .green { color: #00c875; }
+
+    .org-name .accent { color: var(--teal); }
 
     .tagline {
+      max-width: 560px;
       font-size: 26px;
       font-weight: 300;
-      color: #6a8aa0;
-      max-width: 560px;
       line-height: 1.5;
-    }
-
-    @keyframes pulseDot {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50%       { opacity: 0.3; transform: scale(0.6); }
+      color: #d2d4d9;
     }
 
     .match-box {
-      background: rgba(0, 200, 100, 0.08);
-      border: 1px solid rgba(0, 200, 100, 0.25);
-      border-radius: 10px;
-      padding: 16px 20px;
+      max-width: 520px;
+      padding: 18px 22px;
+      border-radius: 18px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      max-width: 480px;
+      gap: 8px;
     }
-    .match-box .match-title {
-      font-size: 18px;
+
+    .match-title {
+      font-size: 17px;
       font-weight: 700;
-      color: #00c875;
-      letter-spacing: 0.08em;
+      letter-spacing: 0.12em;
       text-transform: uppercase;
+      color: var(--pink);
     }
-    .match-box .match-body {
+
+    .match-body {
       font-size: 22px;
-      font-weight: 400;
-      color: #b0cce0;
       line-height: 1.5;
+      color: #e7e8eb;
     }
-    .match-box .match-body strong { color: #fff; font-weight: 700; }
+
+    .match-body strong { color: var(--teal); }
 
     .donate-url {
       font-size: 22px;
       font-weight: 600;
-      color: #4a8a70;
-      letter-spacing: 0.04em;
-      margin-top: 4px;
+      color: var(--muted);
+      letter-spacing: 0.03em;
     }
 
-    /* right column */
     .idle-right {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 22px;
+      gap: 18px;
     }
 
     .thumbs-icon {
@@ -147,99 +215,90 @@
       filter: drop-shadow(0 0 30px rgba(0, 200, 120, 0.4));
       animation: float 3s ease-in-out infinite;
     }
+
     @keyframes float {
       0%, 100% { transform: translateY(0); }
-      50%       { transform: translateY(-10px); }
+      50% { transform: translateY(-10px); }
     }
 
     .gesture-label {
-      font-size: 26px;
+      font-size: 28px;
       font-weight: 700;
-      color: #fff;
       text-align: center;
-      letter-spacing: 0.02em;
+      color: #ffffff;
+      max-width: 320px;
     }
+
     .gesture-sub {
       font-size: 16px;
-      color: #3a5a70;
+      color: var(--muted);
       text-align: center;
     }
 
-    /* thumbs up charge bar */
     .charge-track {
-      width: 240px;
-      height: 7px;
-      background: rgba(255,255,255,0.07);
-      border-radius: 8px;
+      width: 250px;
+      height: 8px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.06);
       overflow: hidden;
     }
+
     #charge-bar {
-      height: 100%;
       width: 0%;
-      background: #00c875;
-      border-radius: 8px;
-      transition: width 0.1s linear;
-      box-shadow: 0 0 12px rgba(0, 200, 120, 0.6);
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--teal), var(--pink));
+      box-shadow: 0 0 18px rgba(47, 214, 198, 0.45);
+      transition: width 0.08s linear;
     }
 
-    .qr-row {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
+    .qr-wrap {
+      padding: 12px;
+      border-radius: 18px;
+      background: #ffffff;
+      box-shadow: var(--shadow);
     }
-    .qr-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 8px;
-    }
-    .qr-item .qr-wrap {
-      background: #fff;
-      border-radius: 10px;
-      padding: 10px;
-    }
-    .qr-item .qr-wrap img {
+
+    .qr-wrap img {
       display: block;
-      width: 180px;
-      height: 180px;
-    }
-    .qr-item .qr-caption {
-      font-size: 16px;
-      font-weight: 600;
-      color: #4a7060;
-      text-align: center;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
+      width: 270px;
+      height: 270px;
     }
 
-    /* bottom bar */
+    .qr-caption {
+      font-size: 15px;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: var(--muted);
+      text-align: center;
+    }
+
     .bottom-bar {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 46px;
-      background: rgba(0, 200, 100, 0.06);
-      border-top: 1px solid rgba(0, 200, 100, 0.12);
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 40px;
+      padding: 0 36px;
+      height: 48px;
+      border-top: 1px solid var(--line);
+      background: rgba(255, 255, 255, 0.035);
       font-size: 12px;
-      color: #2a4050;
+      color: var(--muted-soft);
       letter-spacing: 0.04em;
     }
 
-    /* ── demo view ── */
     #demo {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      background: #000;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 0.7s ease;
+      background: #000000;
     }
+
     #demo.active {
       opacity: 1;
       pointer-events: auto;
@@ -249,26 +308,28 @@
       width: 100%;
       height: 100%;
       object-fit: contain;
+      background: #000000;
     }
 
-    /* hud overlaid on top of video */
     .hud {
       position: absolute;
-      top: 0; left: 0; right: 0;
-      padding: 18px 28px;
+      top: 0;
+      left: 0;
+      right: 0;
+      z-index: 3;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      background: linear-gradient(to bottom, rgba(0,0,0,0.75) 0%, transparent 100%);
-      z-index: 10;
+      padding: 18px 28px;
+      background: linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
     }
 
     .hud-title {
       font-size: 18px;
       font-weight: 700;
-      color: #00c875;
       letter-spacing: 0.1em;
       text-transform: uppercase;
+      color: var(--teal);
     }
 
     .hud-right {
@@ -281,165 +342,201 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      background: rgba(255, 50, 50, 0.18);
-      border: 1px solid rgba(255, 50, 50, 0.4);
-      border-radius: 20px;
-      padding: 4px 12px;
+      padding: 5px 12px;
+      border-radius: 999px;
+      background: rgba(255, 92, 155, 0.16);
+      border: 1px solid rgba(255, 92, 155, 0.28);
+      color: #ffd5e5;
       font-size: 12px;
       font-weight: 700;
-      color: #ff5555;
       letter-spacing: 0.12em;
       text-transform: uppercase;
     }
+
     .live-dot {
       width: 7px;
       height: 7px;
-      background: #ff4444;
       border-radius: 50%;
-      animation: pulseDot 1s ease-in-out infinite;
+      background: var(--pink);
+      animation: pulse 1s ease-in-out infinite;
+    }
+
+    @keyframes pulse {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.35; transform: scale(0.7); }
     }
 
     #countdown {
       font-size: 32px;
       font-weight: 800;
-      color: #fff;
+      color: #ffffff;
       font-variant-numeric: tabular-nums;
       letter-spacing: -0.02em;
     }
 
-    /* shrinking progress bar at bottom */
     .progress-track {
       position: absolute;
-      bottom: 0; left: 0; right: 0;
-      height: 4px;
-      background: rgba(255,255,255,0.08);
-      z-index: 10;
+      left: 20px;
+      right: 20px;
+      bottom: 16px;
+      z-index: 2;
+      height: 6px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.08);
+      overflow: hidden;
     }
+
     #progress-bar {
+      width: 100%;
       height: 100%;
-      background: #00c875;
+      background: linear-gradient(90deg, var(--pink), var(--teal));
       transition: width 1s linear;
+    }
+
+    @media (max-width: 1500px) {
+      .screen {
+        grid-template-columns: 250px minmax(0, 1fr) 250px;
+      }
+      .idle-inner { gap: 48px; }
+      .org-name { font-size: 68px; }
+      .tagline { font-size: 22px; }
+      .qr-wrap img {
+        width: 235px;
+        height: 235px;
+      }
     }
   </style>
 </head>
 <body>
-
-<!-- IDLE STATE -->
-<div id="idle">
-  <div class="idle-inner">
-    <div class="idle-left">
-      <div class="tag">NinerGives 2026</div>
-      <div class="org-name">
-        Support the<br><span class="green">Club for AI Research</span>
+  <div class="screen">
+    <aside class="qr-side">
+      <div class="qr-side-card">
+        <div class="side-label">Donate</div>
+        <div class="qr-wrap"><img src="/static/donate.png" alt="Donate QR"></div>
+        <div class="qr-caption">Support CAIR</div>
       </div>
-      <p class="tagline">
-        A student-led organization exploring AI and machine learning at UNC Charlotte.
-      </p>
-      <div class="match-box">
-        <div class="match-title">Triple Your Impact</div>
-        <div class="match-body">
-          Thanks to alumni donors, student gifts up to $100 get a <strong>2X match</strong>
-          — your <strong>$10 turns into $30</strong> instantly.
+    </aside>
+
+    <main class="center-stage">
+      <div id="idle">
+        <div class="idle-inner">
+          <div class="idle-left">
+            <div class="tag">NinerGives 2026</div>
+            <div class="org-name">
+              Support the<br><span class="accent">Club for AI Research</span>
+            </div>
+            <p class="tagline">
+              A student-led organization exploring AI and machine learning at UNC Charlotte.
+            </p>
+            <div class="match-box">
+              <div class="match-title">Double Your Impact</div>
+              <div class="match-body">
+                Faculty gifts up to $1000 get a <strong>2X match</strong>!
+                Your <strong>$10 turns into $20</strong> instantly.
+              </div>
+            </div>
+            <div class="donate-url">ninernationgives.charlotte.edu</div>
+          </div>
+
+          <div class="idle-right">
+            <div class="thumbs-icon">&#128077;</div>
+            <div class="gesture-label">Give a thumbs up to try our AI demo!</div>
+            <div class="charge-track"><div id="charge-bar"></div></div>
+            <div class="gesture-sub">Hold until bar fills &middot; No data stored</div>
+          </div>
+        </div>
+        <div class="bottom-bar">
+          <span>Club for AI Research (CAIR) &middot; UNC Charlotte &middot; Woodward Hall 4th Floor</span>
+          <span>ninernationgives.charlotte.edu &middot; NinerGives 2026</span>
         </div>
       </div>
-      <div class="donate-url">ninernationgives.charlotte.edu</div>
-    </div>
 
-    <div class="idle-right">
-      <div class="thumbs-icon">👍</div>
-      <div class="gesture-label">Give a thumbs up to try our AI demo!</div>
-      <div class="charge-track"><div id="charge-bar"></div></div>
-      <div class="gesture-sub">Hold until bar fills &nbsp;·&nbsp; No data stored</div>
-      <div class="qr-row">
-        <div class="qr-item">
-          <div class="qr-wrap"><img src="/static/donate.png" alt="Donate QR"></div>
-          <div class="qr-caption">Donate</div>
+      <div id="demo">
+        <div class="hud">
+          <div class="hud-title">Club for AI Research &middot; Live Demo</div>
+          <div class="hud-right">
+            <div class="live-badge"><div class="live-dot"></div>Live</div>
+            <div id="countdown">0:10</div>
+          </div>
         </div>
-        <div class="qr-item">
-          <div class="qr-wrap"><img src="/static/website.png" alt="Website QR"></div>
-          <div class="qr-caption">Our Website</div>
+
+        <img id="video-feed" src="" alt="Live camera feed">
+
+        <div class="progress-track">
+          <div id="progress-bar"></div>
         </div>
       </div>
-    </div>
+    </main>
+
+    <aside class="qr-side">
+      <div class="qr-side-card">
+        <div class="side-label">Our Website</div>
+        <div class="qr-wrap"><img src="/static/website.png" alt="Website QR"></div>
+        <div class="qr-caption">Learn More</div>
+      </div>
+    </aside>
   </div>
 
-  <div class="bottom-bar">
-    <span>Club for AI Research (CAIR) &nbsp;·&nbsp; UNC Charlotte &nbsp;·&nbsp; Woodward Hall 4th Floor</span>
-    <span>ninernationgives.charlotte.edu &nbsp;·&nbsp; NinerGives 2026</span>
-  </div>
-</div>
+  <script>
+    const idleEl = document.getElementById("idle");
+    const demoEl = document.getElementById("demo");
+    const feed = document.getElementById("video-feed");
+    const countdown = document.getElementById("countdown");
+    const progressBar = document.getElementById("progress-bar");
+    const chargeBar = document.getElementById("charge-bar");
 
-<!-- DEMO STATE -->
-<div id="demo">
-  <div class="hud">
-    <div class="hud-title">Charlotte AI Research &nbsp;·&nbsp; Live Demo</div>
-    <div class="hud-right">
-      <div class="live-badge"><div class="live-dot"></div>Live</div>
-      <div id="countdown">0:30</div>
-    </div>
-  </div>
+    let totalDuration = 10;
 
-  <img id="video-feed" src="" alt="Live camera feed">
+    function formatTime(seconds) {
+      return `${Math.floor(seconds / 60)}:${String(seconds % 60).padStart(2, "0")}`;
+    }
 
-  <div class="progress-track">
-    <div id="progress-bar" style="width:100%"></div>
-  </div>
-</div>
+    function updateTimer(remaining) {
+      countdown.textContent = formatTime(remaining);
+      progressBar.style.width = `${(remaining / totalDuration) * 100}%`;
+    }
 
-<script>
-  const idleEl     = document.getElementById('idle');
-  const demoEl     = document.getElementById('demo');
-  const feed       = document.getElementById('video-feed');
-  const countdown  = document.getElementById('countdown');
-  const progressBar = document.getElementById('progress-bar');
-  const chargeBar  = document.getElementById('charge-bar');
+    function showDemo(duration, remaining = duration) {
+      totalDuration = duration;
+      updateTimer(remaining);
+      chargeBar.style.width = "0%";
+      feed.src = `/video_feed?t=${Date.now()}`;
+      idleEl.classList.add("hidden");
+      demoEl.classList.add("active");
+    }
 
-  let totalDuration = 30;
+    function showIdle() {
+      demoEl.classList.remove("active");
+      chargeBar.style.width = "0%";
+      setTimeout(() => {
+        feed.src = "";
+      }, 600);
+      idleEl.classList.remove("hidden");
+    }
 
-  function formatTime(s) {
-    return `${Math.floor(s / 60)}:${String(s % 60).padStart(2, '0')}`;
-  }
+    function connect() {
+      const protocol = location.protocol === "https:" ? "wss" : "ws";
+      const ws = new WebSocket(`${protocol}://${location.host}/ws`);
 
-  function updateTimer(remaining) {
-    countdown.textContent = formatTime(remaining);
-    progressBar.style.width = ((remaining / totalDuration) * 100) + '%';
-  }
+      ws.onmessage = (event) => {
+        const msg = JSON.parse(event.data);
+        if (msg.type === "demo_started") {
+          showDemo(msg.duration, msg.remaining ?? msg.duration);
+        } else if (msg.type === "idle") {
+          showIdle();
+        } else if (msg.type === "tick") {
+          updateTimer(msg.remaining);
+        } else if (msg.type === "thumbs_progress") {
+          chargeBar.style.width = `${msg.value * 100}%`;
+        }
+      };
 
-  function showDemo(duration) {
-    totalDuration = duration;
-    updateTimer(duration);
-    chargeBar.style.width = '0%';
-    feed.src = '/video_feed?t=' + Date.now();  // cache-bust so browser opens fresh connection
-    idleEl.classList.add('hidden');
-    demoEl.classList.add('active');
-  }
+      ws.onclose = () => {
+        setTimeout(connect, 2000);
+      };
+    }
 
-  function showIdle() {
-    demoEl.classList.remove('active');
-    setTimeout(() => { feed.src = ''; }, 700);
-    idleEl.classList.remove('hidden');
-  }
-
-  function connect() {
-    const ws = new WebSocket(`ws://${location.host}/ws`);
-
-    ws.onmessage = (e) => {
-      const msg = JSON.parse(e.data);
-      if (msg.type === 'demo_started') {
-        showDemo(msg.duration);
-      } else if (msg.type === 'idle') {
-        showIdle();
-      } else if (msg.type === 'tick') {
-        updateTimer(msg.remaining);
-      } else if (msg.type === 'thumbs_progress') {
-        chargeBar.style.width = (msg.value * 100) + '%';
-      }
-    };
-
-    ws.onclose = () => setTimeout(connect, 2000);
-  }
-
-  connect();
-</script>
+    connect();
+  </script>
 </body>
 </html>

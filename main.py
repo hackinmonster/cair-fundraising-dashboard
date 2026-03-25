@@ -19,8 +19,8 @@ from mediapipe.tasks import python as mp_python
 from mediapipe.tasks.python import vision as mp_vision
 from ultralytics import YOLO
 
-SESSION_DURATION = 15
-THUMBS_THRESHOLD = 35  # consecutive frames needed (~0.3s at 30fps)
+SESSION_DURATION = 10
+THUMBS_HOLD_SECONDS = 2.0
 
 HAND_MODEL_PATH = "hand_landmarker.task"
 HAND_MODEL_URL = (
@@ -38,7 +38,7 @@ ws_clients: list[WebSocket] = []
 frame_lock = threading.Lock()
 current_frame: np.ndarray | None = None
 stop_event = threading.Event()
-thumbs_count = 0
+thumbs_hold_started_at: float | None = None
 
 model: YOLO | None = None
 main_loop: asyncio.AbstractEventLoop | None = None
@@ -86,7 +86,7 @@ def draw_yolo_frame(frame: np.ndarray, persons: list) -> np.ndarray:
         text = "Scanning for generous humans..."
         (tw, _), _ = cv2.getTextSize(text, font, 1.0, 2)
         cv2.putText(out, text, (w // 2 - tw // 2, h - 30),
-                    font, 1.0, (80, 220, 255), 2, cv2.LINE_AA)
+                    font, 1.0, (160, 220, 210), 2, cv2.LINE_AA)
         return out
 
     # update confidence at most once per second so it doesn't flicker
@@ -97,9 +97,9 @@ def draw_yolo_frame(frame: np.ndarray, persons: list) -> np.ndarray:
 
     for box in persons:
         x1, y1, x2, y2 = map(int, box.xyxy[0])
-        cv2.rectangle(out, (x1, y1), (x2, y2), (0, 230, 100), 3)
+        cv2.rectangle(out, (x1, y1), (x2, y2), (38, 204, 188), 3)
 
-        label = f"Will donate to CAIR, confidence: {_conf_value}%"
+        label = f"Likely to donate to CAIR: {_conf_value}%"
         fs, th = 0.72, 2
 
         (lw, lh), _ = cv2.getTextSize(label, font, fs, th)
@@ -107,7 +107,7 @@ def draw_yolo_frame(frame: np.ndarray, persons: list) -> np.ndarray:
         bg_h = lh + 16
         by1 = max(0, y1 - bg_h - 6)
 
-        cv2.rectangle(out, (x1, by1), (x1 + bg_w, y1 - 4), (0, 200, 80), -1)
+        cv2.rectangle(out, (x1, by1), (x1 + bg_w, y1 - 4), (255, 84, 143), -1)
         cv2.putText(out, label, (x1 + 10, by1 + lh + 6),
                     font, fs, (0, 0, 0), th, cv2.LINE_AA)
 
@@ -115,7 +115,7 @@ def draw_yolo_frame(frame: np.ndarray, persons: list) -> np.ndarray:
 
 
 def camera_worker():
-    global current_frame, thumbs_count
+    global current_frame, thumbs_hold_started_at
 
     cap = cv2.VideoCapture(0)
     if not cap.isOpened():
@@ -157,26 +157,29 @@ def camera_worker():
                             break
 
                 if detected:
-                    thumbs_count += 1
-                    if thumbs_count >= THUMBS_THRESHOLD and main_loop:
-                        thumbs_count = 0
-                        asyncio.run_coroutine_threadsafe(trigger_demo(), main_loop)
-                    elif main_loop:
+                    now = time.monotonic()
+                    if thumbs_hold_started_at is None:
+                        thumbs_hold_started_at = now
+                    progress = min((now - thumbs_hold_started_at) / THUMBS_HOLD_SECONDS, 1.0)
+                    if main_loop:
                         asyncio.run_coroutine_threadsafe(
-                            broadcast({"type": "thumbs_progress", "value": thumbs_count / THUMBS_THRESHOLD}),
+                            broadcast({"type": "thumbs_progress", "value": progress}),
                             main_loop,
                         )
+                    if progress >= 1.0 and main_loop:
+                        thumbs_hold_started_at = None
+                        asyncio.run_coroutine_threadsafe(trigger_demo(), main_loop)
                 else:
-                    if thumbs_count > 0:
-                        thumbs_count = max(0, thumbs_count - 2)
+                    if thumbs_hold_started_at is not None:
+                        thumbs_hold_started_at = None
                         if main_loop:
                             asyncio.run_coroutine_threadsafe(
-                                broadcast({"type": "thumbs_progress", "value": thumbs_count / THUMBS_THRESHOLD}),
+                                broadcast({"type": "thumbs_progress", "value": 0}),
                                 main_loop,
                             )
 
             else:  # demo mode
-                thumbs_count = 0
+                thumbs_hold_started_at = None
                 results = model(frame, classes=[0], verbose=False, imgsz=640)
                 persons = [box for r in results for box in r.boxes]
                 annotated = draw_yolo_frame(frame, persons)
@@ -188,13 +191,18 @@ def camera_worker():
         current_frame = None
 
 
-async def trigger_demo():
+async def trigger_demo() -> bool:
     if state["active"]:
-        return
+        return False
     state["active"] = True
     state["mode"] = "demo"
     state["end_time"] = time.time() + SESSION_DURATION
-    await broadcast({"type": "demo_started", "duration": SESSION_DURATION})
+    await broadcast({
+        "type": "demo_started",
+        "duration": SESSION_DURATION,
+        "remaining": SESSION_DURATION,
+    })
+    return True
 
 
 async def broadcast(msg: dict):
@@ -270,8 +278,11 @@ async def qr_endpoint(request: Request):
 # manual override — still works if needed
 @app.post("/start")
 async def start_demo():
-    await trigger_demo()
-    return JSONResponse({"status": "started"})
+    started = await trigger_demo()
+    if started:
+        return JSONResponse({"status": "started", "duration": SESSION_DURATION})
+    remaining = max(0, int(state["end_time"] - time.time()))
+    return JSONResponse({"status": "already_active", "remaining": remaining})
 
 
 @app.get("/video_feed")
@@ -302,7 +313,11 @@ async def ws_endpoint(ws: WebSocket):
 
     if state["active"]:
         remaining = max(0, int(state["end_time"] - time.time()))
-        await ws.send_json({"type": "demo_started", "duration": remaining})
+        await ws.send_json({
+            "type": "demo_started",
+            "duration": SESSION_DURATION,
+            "remaining": remaining,
+        })
     else:
         await ws.send_json({"type": "idle"})
 
