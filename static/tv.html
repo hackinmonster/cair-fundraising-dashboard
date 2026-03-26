@@ -9,7 +9,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;600;700;800&display=swap" rel="stylesheet">
   <style>
     :root {
-      --bg: #030303;
+      --bg: #111317;
+      --bg-deep: #080a0d;
       --panel: rgba(255, 255, 255, 0.04);
       --panel-strong: rgba(255, 255, 255, 0.07);
       --line: rgba(255, 255, 255, 0.12);
@@ -27,9 +28,11 @@
       width: 100%;
       height: 100%;
       overflow: hidden;
+      font-size: 18px;
       background:
-        radial-gradient(circle at top left, rgba(47, 214, 198, 0.1), transparent 28%),
-        radial-gradient(circle at bottom right, rgba(255, 92, 155, 0.1), transparent 30%),
+        radial-gradient(circle at top left, rgba(47, 214, 198, 0.16), transparent 30%),
+        radial-gradient(circle at bottom right, rgba(255, 92, 155, 0.14), transparent 34%),
+        linear-gradient(180deg, rgba(255, 255, 255, 0.015), rgba(0, 0, 0, 0)),
         var(--bg);
       color: var(--text);
       font-family: "Space Grotesk", system-ui, sans-serif;
@@ -40,10 +43,31 @@
       position: fixed;
       inset: 0;
       background-image:
-        linear-gradient(rgba(255, 255, 255, 0.025) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(255, 255, 255, 0.025) 1px, transparent 1px);
-      background-size: 56px 56px;
-      opacity: 0.5;
+        linear-gradient(rgba(255, 255, 255, 0.022) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.022) 1px, transparent 1px);
+      background-size: 72px 72px;
+      opacity: 0.42;
+      animation: gridDrift 24s linear infinite;
+      pointer-events: none;
+    }
+
+    body::after {
+      content: "";
+      position: fixed;
+      inset: 0;
+      background:
+        radial-gradient(circle at 18% 24%, rgba(47, 214, 198, 1) 0 5px, transparent 6px),
+        radial-gradient(circle at 76% 22%, rgba(255, 92, 155, 0.88) 0 5px, transparent 6px),
+        radial-gradient(circle at 82% 72%, rgba(47, 214, 198, 0.94) 0 5px, transparent 6px),
+        radial-gradient(circle at 28% 78%, rgba(255, 92, 155, 0.74) 0 4px, transparent 5px),
+        linear-gradient(120deg, transparent 0 11%, rgba(47, 214, 198, 0.25) 11% 11.45%, transparent 11.45% 100%),
+        linear-gradient(90deg, transparent 0 17%, rgba(255, 92, 155, 0.18) 17% 17.4%, transparent 17.4% 100%),
+        linear-gradient(180deg, transparent 0 73%, rgba(47, 214, 198, 0.17) 73% 73.4%, transparent 73.4% 100%),
+        linear-gradient(145deg, transparent 0 52%, rgba(255, 92, 155, 0.14) 52% 52.35%, transparent 52.35% 100%);
+      background-size: 100% 100%;
+      opacity: 0.72;
+      transform-origin: center;
+      animation: circuitPulse 6.5s ease-in-out infinite;
       pointer-events: none;
     }
 
@@ -51,14 +75,34 @@
       position: relative;
       z-index: 1;
       display: grid;
-      grid-template-columns: 300px minmax(0, 1fr) 300px;
-      gap: 24px;
+      grid-template-columns: 340px minmax(0, 1fr) 340px;
+      gap: 30px;
       width: 100vw;
       height: 100vh;
-      padding: 24px;
+      padding: 28px;
+    }
+
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 20% 30%, rgba(47, 214, 198, 0.1), transparent 24%),
+        radial-gradient(circle at 75% 24%, rgba(255, 92, 155, 0.1), transparent 24%),
+        radial-gradient(circle at 48% 78%, rgba(47, 214, 198, 0.085), transparent 30%),
+        linear-gradient(90deg, transparent 0 8%, rgba(47, 214, 198, 0.14) 8% 8.18%, transparent 8.18% 100%),
+        linear-gradient(180deg, transparent 0 64%, rgba(255, 92, 155, 0.1) 64% 64.18%, transparent 64.18% 100%),
+        linear-gradient(135deg, transparent 0 42%, rgba(255, 255, 255, 0.06) 42% 42.18%, transparent 42.18% 100%);
+      opacity: 0.68;
+      mix-blend-mode: screen;
+      animation: traceSweep 11s linear infinite;
+      pointer-events: none;
     }
 
     .qr-side {
+      position: relative;
+      z-index: 1;
       display: flex;
       align-items: center;
       justify-content: center;
@@ -75,13 +119,13 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 14px;
-      padding: 24px 18px;
+      gap: 18px;
+      padding: 30px 22px;
       text-align: center;
     }
 
     .side-label {
-      font-size: 14px;
+      font-size: 18px;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -90,17 +134,69 @@
 
     .center-stage {
       position: relative;
+      z-index: 1;
       overflow: hidden;
       border-radius: 28px;
       border: 1px solid var(--line);
-      background: rgba(255, 255, 255, 0.025);
+      background:
+        linear-gradient(180deg, rgba(255, 255, 255, 0.035), rgba(255, 255, 255, 0.02)),
+        radial-gradient(circle at top left, rgba(47, 214, 198, 0.08), transparent 30%),
+        rgba(255, 255, 255, 0.025);
       box-shadow: var(--shadow);
+    }
+
+    .center-stage::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+      background:
+        radial-gradient(circle at 13% 16%, rgba(47, 214, 198, 1) 0 5px, transparent 6px),
+        radial-gradient(circle at 22% 16%, rgba(47, 214, 198, 0.5) 0 13px, transparent 14px),
+        radial-gradient(circle at 82% 19%, rgba(255, 92, 155, 0.92) 0 5px, transparent 6px),
+        radial-gradient(circle at 82% 32%, rgba(255, 92, 155, 0.56) 0 12px, transparent 13px),
+        radial-gradient(circle at 17% 76%, rgba(47, 214, 198, 0.82) 0 5px, transparent 6px),
+        radial-gradient(circle at 76% 76%, rgba(255, 92, 155, 0.72) 0 5px, transparent 6px),
+        linear-gradient(90deg, transparent 0 13%, rgba(47, 214, 198, 0.24) 13% 13.4%, transparent 13.4% 100%),
+        linear-gradient(180deg, transparent 0 16%, rgba(47, 214, 198, 0.22) 16% 16.4%, transparent 16.4% 100%),
+        linear-gradient(90deg, transparent 0 22%, rgba(47, 214, 198, 0.18) 22% 22.34%, transparent 22.34% 100%),
+        linear-gradient(180deg, transparent 0 32%, rgba(255, 92, 155, 0.22) 32% 32.4%, transparent 32.4% 100%),
+        linear-gradient(90deg, transparent 0 56%, rgba(255, 255, 255, 0.08) 56% 56.28%, transparent 56.28% 100%),
+        linear-gradient(180deg, transparent 0 76%, rgba(47, 214, 198, 0.18) 76% 76.32%, transparent 76.32% 100%),
+        linear-gradient(130deg, transparent 0 64%, rgba(255, 92, 155, 0.18) 64% 64.28%, transparent 64.28% 100%),
+        linear-gradient(150deg, transparent 0 47%, rgba(47, 214, 198, 0.14) 47% 47.24%, transparent 47.24% 100%);
+      opacity: 0.88;
+      animation: circuitDrift 12s linear infinite, nodeFlash 5.5s ease-in-out infinite, areaPulse 8s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    .center-stage::after {
+      content: "";
+      position: absolute;
+      z-index: 0;
+      right: 48px;
+      top: 56px;
+      width: 260px;
+      height: 180px;
+      border-radius: 24px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      background:
+        linear-gradient(135deg, rgba(255, 255, 255, 0.06), rgba(255, 255, 255, 0.015)),
+        radial-gradient(circle at 28% 35%, rgba(47, 214, 198, 0.18), transparent 55%),
+        rgba(14, 17, 23, 0.72);
+      box-shadow:
+        inset 0 0 0 2px rgba(255, 255, 255, 0.025),
+        0 0 32px rgba(47, 214, 198, 0.1);
+      opacity: 0.82;
+      animation: panelGlow 6s ease-in-out infinite;
+      pointer-events: none;
     }
 
     #idle,
     #demo {
       position: absolute;
       inset: 0;
+      z-index: 1;
       transition: opacity 0.6s ease;
     }
 
@@ -108,7 +204,7 @@
       display: flex;
       flex-direction: column;
       justify-content: center;
-      padding: 56px 72px 72px;
+      padding: 72px 88px 84px;
     }
 
     #idle.hidden {
@@ -121,65 +217,66 @@
       z-index: 1;
       display: grid;
       grid-template-columns: 1fr auto;
-      gap: 72px;
+      gap: 88px;
       align-items: center;
       width: 100%;
-      max-width: 1500px;
+      max-width: 1640px;
       margin: 0 auto;
     }
 
     .idle-left {
       display: flex;
       flex-direction: column;
-      gap: 20px;
+      gap: 26px;
     }
 
     .tag {
       display: inline-block;
       width: fit-content;
-      padding: 8px 18px;
+      padding: 10px 22px;
       border-radius: 999px;
       background: rgba(47, 214, 198, 0.12);
       border: 1px solid rgba(47, 214, 198, 0.24);
       color: var(--teal);
-      font-size: 16px;
+      font-size: 25px;
       font-weight: 700;
       letter-spacing: 0.14em;
       text-transform: uppercase;
     }
 
     .org-name {
-      font-size: 82px;
+      font-size: clamp(92px, 7vw, 122px);
       font-weight: 800;
       line-height: 0.98;
       letter-spacing: -0.04em;
       color: #ffffff;
+      text-shadow: 0 0 32px rgba(47, 214, 198, 0.08);
     }
 
     .org-name .accent { color: var(--teal); }
 
     .tagline {
-      max-width: 560px;
-      font-size: 26px;
+      max-width: 720px;
+      font-size: clamp(30px, 2vw, 38px);
       font-weight: 300;
-      line-height: 1.5;
+      line-height: 1.42;
       color: #d2d4d9;
     }
 
     .match-box {
-      max-width: 520px;
-      padding: 18px 22px;
-      border-radius: 18px;
+      max-width: 660px;
+      padding: 24px 28px;
+      border-radius: 22px;
       background: var(--panel);
       border: 1px solid var(--line);
       box-shadow: var(--shadow);
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 12px;
     }
 
     .match-title {
-      font-size: 17px;
+      font-size: 22px;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -187,33 +284,63 @@
     }
 
     .match-body {
-      font-size: 22px;
-      line-height: 1.5;
+      font-size: 30px;
+      line-height: 1.45;
       color: #e7e8eb;
     }
 
     .match-body strong { color: var(--teal); }
 
+    .campaign-note {
+      max-width: 760px;
+      font-size: 26px;
+      font-weight: 600;
+      line-height: 1.35;
+      color: #f3f5f7;
+    }
+
     .donate-url {
-      font-size: 22px;
+      font-size: 30px;
       font-weight: 600;
       color: var(--muted);
       letter-spacing: 0.03em;
     }
+
+    .lab-note {
+      max-width: 720px;
+      font-size: 24px;
+      line-height: 1.4;
+      color: #d7e8e5;
+    }
+
+    .lab-note strong { color: var(--teal); }
 
     .idle-right {
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 18px;
+      gap: 24px;
     }
 
     .thumbs-icon {
-      font-size: 80px;
-      line-height: 1;
-      filter: drop-shadow(0 0 30px rgba(0, 200, 120, 0.4));
+      width: 132px;
+      height: 132px;
+      filter: drop-shadow(0 0 34px rgba(47, 214, 198, 0.35));
       animation: float 3s ease-in-out infinite;
+    }
+
+    .thumbs-icon svg {
+      display: block;
+      width: 100%;
+      height: 100%;
+    }
+
+    .thumbs-icon img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
     }
 
     @keyframes float {
@@ -222,22 +349,23 @@
     }
 
     .gesture-label {
-      font-size: 28px;
+      font-size: 38px;
       font-weight: 700;
       text-align: center;
       color: #ffffff;
-      max-width: 320px;
+      max-width: 420px;
+      line-height: 1.15;
     }
 
     .gesture-sub {
-      font-size: 16px;
+      font-size: 20px;
       color: var(--muted);
       text-align: center;
     }
 
     .charge-track {
-      width: 250px;
-      height: 8px;
+      width: 320px;
+      height: 12px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
       border: 1px solid rgba(255, 255, 255, 0.06);
@@ -254,20 +382,20 @@
     }
 
     .qr-wrap {
-      padding: 12px;
-      border-radius: 18px;
+      padding: 16px;
+      border-radius: 22px;
       background: #ffffff;
       box-shadow: var(--shadow);
     }
 
     .qr-wrap img {
       display: block;
-      width: 270px;
-      height: 270px;
+      width: 292px;
+      height: 292px;
     }
 
     .qr-caption {
-      font-size: 15px;
+      font-size: 19px;
       font-weight: 700;
       letter-spacing: 0.08em;
       text-transform: uppercase;
@@ -284,11 +412,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 0 36px;
-      height: 48px;
+      padding: 0 40px;
+      height: 60px;
       border-top: 1px solid var(--line);
       background: rgba(255, 255, 255, 0.035);
-      font-size: 12px;
+      font-size: 15px;
       color: var(--muted-soft);
       letter-spacing: 0.04em;
     }
@@ -320,12 +448,12 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 18px 28px;
+      padding: 24px 32px;
       background: linear-gradient(180deg, rgba(0, 0, 0, 0.75), rgba(0, 0, 0, 0));
     }
 
     .hud-title {
-      font-size: 18px;
+      font-size: 22px;
       font-weight: 700;
       letter-spacing: 0.1em;
       text-transform: uppercase;
@@ -342,12 +470,12 @@
       display: flex;
       align-items: center;
       gap: 7px;
-      padding: 5px 12px;
+      padding: 8px 14px;
       border-radius: 999px;
       background: rgba(255, 92, 155, 0.16);
       border: 1px solid rgba(255, 92, 155, 0.28);
       color: #ffd5e5;
-      font-size: 12px;
+      font-size: 14px;
       font-weight: 700;
       letter-spacing: 0.12em;
       text-transform: uppercase;
@@ -367,7 +495,7 @@
     }
 
     #countdown {
-      font-size: 32px;
+      font-size: 40px;
       font-weight: 800;
       color: #ffffff;
       font-variant-numeric: tabular-nums;
@@ -376,11 +504,11 @@
 
     .progress-track {
       position: absolute;
-      left: 20px;
-      right: 20px;
-      bottom: 16px;
+      left: 24px;
+      right: 24px;
+      bottom: 20px;
       z-index: 2;
-      height: 6px;
+      height: 10px;
       border-radius: 999px;
       background: rgba(255, 255, 255, 0.08);
       overflow: hidden;
@@ -393,16 +521,92 @@
       transition: width 1s linear;
     }
 
+    @keyframes circuitPulse {
+      0%, 100% { opacity: 0.45; transform: scale(1); }
+      50% { opacity: 0.82; transform: scale(1.02); }
+    }
+
+    @keyframes circuitDrift {
+      0% { transform: translate3d(0, 0, 0); }
+      25% { transform: translate3d(8px, -6px, 0); }
+      50% { transform: translate3d(14px, -10px, 0); }
+      75% { transform: translate3d(-6px, 7px, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes gridDrift {
+      0% { transform: translate3d(0, 0, 0); }
+      50% { transform: translate3d(18px, 10px, 0); }
+      100% { transform: translate3d(0, 0, 0); }
+    }
+
+    @keyframes traceSweep {
+      0% { transform: translate3d(-2%, 0, 0) scale(1); opacity: 0.34; }
+      50% { transform: translate3d(2%, -1.5%, 0) scale(1.02); opacity: 0.72; }
+      100% { transform: translate3d(-2%, 0, 0) scale(1); opacity: 0.34; }
+    }
+
+    @keyframes nodeFlash {
+      0%, 100% { filter: brightness(1) saturate(1); }
+      50% { filter: brightness(1.25) saturate(1.3); }
+    }
+
+    @keyframes panelGlow {
+      0%, 100% {
+        opacity: 0.72;
+        transform: translate3d(0, 0, 0);
+        box-shadow:
+          inset 0 0 0 2px rgba(255, 255, 255, 0.025),
+          0 0 32px rgba(47, 214, 198, 0.1);
+      }
+      50% {
+        opacity: 0.9;
+        transform: translate3d(-8px, 6px, 0);
+        box-shadow:
+          inset 0 0 0 2px rgba(255, 255, 255, 0.04),
+          0 0 42px rgba(255, 92, 155, 0.16);
+      }
+    }
+
+    @keyframes areaPulse {
+      0%, 100% {
+        filter: brightness(1) saturate(1);
+        opacity: 0.82;
+      }
+      25% {
+        filter: brightness(1.18) saturate(1.18);
+        opacity: 0.94;
+      }
+      50% {
+        filter: brightness(1.05) saturate(1.05);
+        opacity: 0.86;
+      }
+      75% {
+        filter: brightness(1.22) saturate(1.2);
+        opacity: 0.95;
+      }
+    }
+
     @media (max-width: 1500px) {
       .screen {
-        grid-template-columns: 250px minmax(0, 1fr) 250px;
+        grid-template-columns: 280px minmax(0, 1fr) 280px;
       }
-      .idle-inner { gap: 48px; }
-      .org-name { font-size: 68px; }
-      .tagline { font-size: 22px; }
+      #idle { padding: 60px 64px 72px; }
+      .idle-inner { gap: 56px; }
+      .org-name { font-size: 76px; }
+      .tagline { font-size: 26px; }
+      .match-body { font-size: 24px; }
+      .campaign-note { font-size: 22px; }
+      .donate-url { font-size: 24px; }
+      .lab-note { font-size: 20px; }
+      .gesture-label { font-size: 32px; }
       .qr-wrap img {
-        width: 235px;
-        height: 235px;
+        width: 240px;
+        height: 240px;
+      }
+      .center-stage::after {
+        width: 210px;
+        height: 150px;
       }
     }
   </style>
@@ -435,11 +639,20 @@
                 Your <strong>$10 turns into $20</strong> instantly.
               </div>
             </div>
+            <div class="campaign-note">Early donations being accepted now!</div>
             <div class="donate-url">ninernationgives.charlotte.edu</div>
+            <div class="lab-note"><strong>We are based in this lab!</strong> Stop by and ask us about CAIR.</div>
           </div>
 
           <div class="idle-right">
-            <div class="thumbs-icon">&#128077;</div>
+            <div class="thumbs-icon" aria-hidden="true">
+              <img
+                src="/static/thumbs-up-apple.png"
+                alt=""
+                loading="eager"
+                decoding="async"
+              >
+            </div>
             <div class="gesture-label">Give a thumbs up to try our AI demo!</div>
             <div class="charge-track"><div id="charge-bar"></div></div>
             <div class="gesture-sub">Hold until bar fills &middot; No data stored</div>

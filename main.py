@@ -97,7 +97,7 @@ def draw_yolo_frame(frame: np.ndarray, persons: list) -> np.ndarray:
 
     for box in persons:
         x1, y1, x2, y2 = map(int, box.xyxy[0])
-        cv2.rectangle(out, (x1, y1), (x2, y2), (38, 204, 188), 3)
+        cv2.rectangle(out, (x1, y1), (x2, y2), (198, 214, 47), 3)
 
         label = f"Likely to donate to CAIR: {_conf_value}%"
         fs, th = 0.72, 2
@@ -107,7 +107,7 @@ def draw_yolo_frame(frame: np.ndarray, persons: list) -> np.ndarray:
         bg_h = lh + 16
         by1 = max(0, y1 - bg_h - 6)
 
-        cv2.rectangle(out, (x1, by1), (x1 + bg_w, y1 - 4), (255, 84, 143), -1)
+        cv2.rectangle(out, (x1, by1), (x1 + bg_w, y1 - 4), (198, 214, 47), -1)
         cv2.putText(out, label, (x1 + 10, by1 + lh + 6),
                     font, fs, (0, 0, 0), th, cv2.LINE_AA)
 
